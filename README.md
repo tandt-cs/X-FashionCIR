@@ -62,6 +62,32 @@ pip install -r requirements.txt
 
 *Note: For optimal performance, ensure that the PyTorch installation matches your specific CUDA toolkit version.*
 
+**3. Data & Model Preparation**
+
+To ensure execution stability in offline and enterprise environments, the foundational dataset and pre-trained models must be explicitly downloaded and placed in the appropriate directories prior to execution.
+
+**A. The Fashion-IQ Dataset**
+
+- **Source**: [IBM Fashion-IQ Official Repository](https://github.com/XiaoxiaoGuo/fashion-iq)
+
+- **Action**: Download the raw image corpus and the associated natural language JSON caption files.
+
+- Placement Structure:
+
+  - Extract the image files to: `data/images/`
+  - Place the JSON caption files to: `data/captions/`
+
+**B. Pre-Trained Foundation Models**
+Download the following models directly from the Hugging Face Model Hub and store them in the data/models/ directory.
+
+- **Vision Model**: [openai/clip-vit-base-patch32](https://huggingface.co/openai/clip-vit-base-patch32)
+
+  - Placement: `data/models/clip-vit-base-patch32/`
+
+- **Multilingual Text Model**: [sentence-transformers/clip-ViT-B-32-multilingual-v1](https://huggingface.co/sentence-transformers/clip-ViT-B-32-multilingual-v1)
+
+  - Placement: `data/models/clip-ViT-B-32-multilingual-v1/`
+
 ## Execution Pipeline
 
 To reproduce the experimental results, execute the scripts in the following sequential order:
