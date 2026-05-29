@@ -12,31 +12,31 @@ from config import Config
 from core_models import CombinerNetwork
 
 # ==========================================
-# QUY TRÌNH KIỂM ĐỊNH ĐA PHƯƠNG PHÁP
+# MULTI-METHOD COMPARATIVE EVALUATION PIPELINE
 # ==========================================
 class ModelEvaluator:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"[#] Khởi tạo quá trình đánh giá trên thiết bị: {self.device.upper()}")
+        print(f"[*] Initializing evaluation protocol on architectural backend: {self.device.upper()}")
         
         self.text_model = SentenceTransformer(Config.TEXT_MODEL_ID, device=self.device)
         self.text_model.eval()
         
-        print("[#] Nạp ma trận vectơ hình ảnh vào bộ nhớ...")
+        print("[*] Retrieving visual embedding spatial matrices...")
         self.img_embeddings = torch.tensor(np.load(Config.OUTPUT_EMBEDDINGS)).to(self.device)
         with open(Config.OUTPUT_INDEX_MAP, 'r') as f:
             self.id_to_idx = json.load(f)
             
-        print("[#] Nạp trọng số mô hình đề xuất...")
+        print("[*] Initializing neural integration weights...")
         self.combiner = CombinerNetwork().to(self.device)
         model_path = os.path.join("models", "best_combiner.pth")
         if os.path.exists(model_path):
             self.combiner.load_state_dict(torch.load(model_path, map_location=self.device))
             self.combiner.eval()
         else:
-            raise FileNotFoundError(f"Không tìm thấy tệp trọng số tại {model_path}. Vui lòng chạy quy trình huấn luyện trước.")
+            raise FileNotFoundError(f"[!] Architecture weights absent at {model_path}. Optimization protocol sequence required prior to validation.")
 
-        # Nạp dữ liệu kiểm định
+        # Aggregate empirical query dataset
         captions_dir = Config.CAPTIONS_DIR
         val_paths = [os.path.join(captions_dir, f) for f in os.listdir(captions_dir) if f.endswith('.val.vn.json')]
         self.val_data = []
@@ -44,10 +44,10 @@ class ModelEvaluator:
             with open(vp, 'r', encoding='utf-8') as f:
                 self.val_data.extend(json.load(f))
                 
-        print(f"[#] Tổng số mẫu kiểm thử: {len(self.val_data)}")
+        print(f"[*] Global query resolution space identified: {len(self.val_data)}")
 
     def compute_metrics(self, similarities, target_idx):
-        """Tính toán các chỉ số độ phủ và thứ hạng cho một truy vấn."""
+        """Mathematical computation of coverage bounds and absolute spatial ranks."""
         _, top50 = torch.topk(similarities, 50)
         top50_indices = top50.cpu().numpy()
         
@@ -61,10 +61,10 @@ class ModelEvaluator:
 
     def run_comparative_evaluation(self):
         print("\n" + "="*70)
-        print("🚀 BẮT ĐẦU ĐỐI CHIẾU CÁC PHƯƠNG PHÁP TÌM KIẾM")
+        print("🚀 INITIATING MULTI-METHOD SEARCH ARCHITECTURE COMPARISON")
         print("="*70)
 
-        # Khởi tạo bộ lưu trữ kết quả cho 4 phương pháp
+        # Baseline and proposed architecture tracking variables
         results = {
             "Image-Only": {"r1": 0, "r5": 0, "r10": 0, "r50": 0, "mr": 0},
             "Text-Only": {"r1": 0, "r5": 0, "r10": 0, "r50": 0, "mr": 0},
@@ -75,7 +75,7 @@ class ModelEvaluator:
         valid_queries = 0
 
         with torch.no_grad():
-            for item in tqdm(self.val_data, desc="Tiến trình đánh giá tổng hợp"):
+            for item in tqdm(self.val_data, desc="Comprehensive Vector Projection Analysis"):
                 cand_id = item.get('candidate')
                 target_id = item.get('target')
                 
@@ -90,26 +90,26 @@ class ModelEvaluator:
                 text_vec = self.text_model.encode([text], convert_to_tensor=True, device=self.device)
                 text_vec = F.normalize(text_vec, p=2, dim=-1)
 
-                # 1. Image-Only Baseline
+                # 1. Visual-Only Isolation (Baseline)
                 sim_img = torch.matmul(self.img_embeddings, cand_vec.squeeze())
                 m1 = self.compute_metrics(sim_img, target_idx)
                 
-                # 2. Text-Only Baseline
+                # 2. Textual-Only Isolation (Baseline)
                 sim_txt = torch.matmul(self.img_embeddings, text_vec.squeeze())
                 m2 = self.compute_metrics(sim_txt, target_idx)
                 
-                # 3. Vector Addition Baseline
+                # 3. Arithmetic Vector Combination (Baseline)
                 add_vec = cand_vec + text_vec
                 add_vec = F.normalize(add_vec, p=2, dim=-1)
                 sim_add = torch.matmul(self.img_embeddings, add_vec.squeeze())
                 m3 = self.compute_metrics(sim_add, target_idx)
                 
-                # 4. Combiner Network (Mô hình đề xuất)
+                # 4. Gated Combiner Sub-network (Proposed Methodology)
                 comb_vec = self.combiner(cand_vec, text_vec)
                 sim_comb = torch.matmul(self.img_embeddings, comb_vec.squeeze())
                 m4 = self.compute_metrics(sim_comb, target_idx)
 
-                # Cộng dồn kết quả
+                # Vector constraint aggregations
                 for method, metrics in zip(results.keys(), [m1, m2, m3, m4]):
                     results[method]["r1"] += metrics[0]
                     results[method]["r5"] += metrics[1]
@@ -117,7 +117,7 @@ class ModelEvaluator:
                     results[method]["r50"] += metrics[3]
                     results[method]["mr"] += metrics[4]
 
-        # Tổng hợp thành phần trăm và trung bình
+        # Resolution of relative distribution parameters
         for method in results:
             for key in ["r1", "r5", "r10", "r50"]:
                 results[method][key] = (results[method][key] / valid_queries) * 100
@@ -127,16 +127,16 @@ class ModelEvaluator:
 
     def print_and_save_report(self, results, total_queries):
         print("\n" + "*"*80)
-        print(f" BÁO CÁO HIỆU NĂNG TỔNG HỢP (TỔNG SỐ TRUY VẤN: {total_queries})")
+        print(f" COMPREHENSIVE PERFORMANCE REPORT (GLOBAL VALIDATION MANIFOLD: {total_queries})")
         print("*"*80)
-        print(f"{'Phương pháp':<20} | {'R@1':<7} | {'R@5':<7} | {'R@10':<7} | {'R@50':<7} | {'Mean Rank':<10}")
+        print(f"{'Methodology':<20} | {'R@1':<7} | {'R@5':<7} | {'R@10':<7} | {'R@50':<7} | {'Mean Rank':<10}")
         print("-" * 80)
         
         for method, metrics in results.items():
             print(f"{method:<20} | {metrics['r1']:5.2f}% | {metrics['r5']:5.2f}% | {metrics['r10']:5.2f}% | {metrics['r50']:5.2f}% | {metrics['mr']:8.1f}")
         print("*"*80)
 
-        # Xuất tệp tin lưu trữ
+        # External log file execution mapping
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         log_filename = f"comparison_results_{timestamp}.json"
         
@@ -144,14 +144,14 @@ class ModelEvaluator:
         log_path = os.path.join("results", log_filename)
         
         log_data = {
-            "thoi_gian_hoan_tat": timestamp,
-            "tong_so_truy_van": total_queries,
-            "so_lieu_danh_gia": results
+            "execution_timestamp": timestamp,
+            "validation_instances": total_queries,
+            "performance_metrics": results
         }
         
         with open(log_path, 'w', encoding='utf-8') as f:
             json.dump(log_data, f, ensure_ascii=False, indent=4)
-        print(f"Dữ liệu đối chiếu đã được trích xuất thành công vào: {log_path}")
+        print(f"[*] Statistical deviation benchmarks effectively written to: {log_path}")
 
 if __name__ == "__main__":
     evaluator = ModelEvaluator()
