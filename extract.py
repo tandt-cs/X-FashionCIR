@@ -7,24 +7,24 @@ from config import Config
 
 def extract_features():
     Config.setup_directories()
-    # Tự động nhận diện GPU (nếu torch.cuda.is_available() là True)
+    # Dynamic hardware acceleration detection
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Sử dụng thiết bị: {device.upper()}")
+    print(f"[*] Computational backend engaged: {device.upper()}")
     
     model = CLIPModel.from_pretrained(Config.VISION_MODEL_ID).to(device).eval()
     processor = CLIPProcessor.from_pretrained(Config.VISION_MODEL_ID)
     
     if not os.path.exists(Config.IMAGE_DIR): 
-        print(f"Lỗi: Không tìm thấy thư mục {Config.IMAGE_DIR}")
+        print(f"[!] Critical Error: Dataset directory {Config.IMAGE_DIR} not found.")
         return
         
     files = [f for f in os.listdir(Config.IMAGE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-    print(f"Tìm thấy {len(files)} ảnh.")
+    print(f"[*] Discovered {len(files)} visual artifacts.")
     
     all_embeddings, id_to_index = [], {}
     
     with torch.no_grad():
-        for i in tqdm(range(0, len(files), Config.BATCH_SIZE), desc="Trích xuất Vector"):
+        for i in tqdm(range(0, len(files), Config.BATCH_SIZE), desc="Extracting Latent Representations"):
             batch = files[i : i + Config.BATCH_SIZE]
             imgs, valid = [], []
             for f in batch:
@@ -37,21 +37,21 @@ def extract_features():
             
             inputs = processor(images=imgs, return_tensors="pt").to(device)
             
-            # Cập nhật API lấy đặc trưng hình ảnh cho bản transformers mới
+            # API normalization for contemporary transformer architectures
             outputs = model.get_image_features(**inputs)
             
-            # Kiểm tra xem output có phải tensor không, nếu không lấy thuộc tính image_embeds
+            # Sub-graph verification to ensure tensor conformity
             if hasattr(outputs, 'image_embeds'):
                 feats = outputs.image_embeds
             elif isinstance(outputs, torch.Tensor):
                  feats = outputs
             else:
-                 # Trường hợp trả về BaseModelOutputWithPooling
+                 # Fallback for BaseModelOutputWithPooling variants
                  feats = model.vision_model(**inputs).pooler_output
-                 # Chiếu (project) vector về đúng không gian của CLIP
+                 # Enforce visual projection mapping
                  feats = model.visual_projection(feats)
             
-            # Chuẩn hóa (L2 Normalization)
+            # L2 Normalization constraint for spherical coordinate geometry
             feats = feats / feats.norm(p=2, dim=-1, keepdim=True)
             feats_np = feats.cpu().numpy()
             
@@ -62,7 +62,7 @@ def extract_features():
     np.save(Config.OUTPUT_EMBEDDINGS, np.array(all_embeddings, dtype=np.float32))
     with open(Config.OUTPUT_INDEX_MAP, 'w') as f:
         json.dump(id_to_index, f)
-    print("Trích xuất hoàn tất!")
+    print("\n[+] Feature extraction pipeline successfully terminated!")
 
 if __name__ == "__main__":
     extract_features()
