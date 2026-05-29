@@ -1,0 +1,15 @@
+deep-translator
+tqdm
+
+torch
+torchvision
+numpy
+
+Pillow
+
+transformers
+sentence-transformers
+
+streamlit
+
+matplotlib

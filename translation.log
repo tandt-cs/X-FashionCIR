@@ -1,0 +1,52 @@
+2026-05-27 09:52:18,379 - [INFO] - Cần dịch: 5985 mục.
+2026-05-27 10:24:51,876 - [WARNING] - Không thể dịch: '.'. Giữ nguyên bản gốc.
+2026-05-27 13:04:23,915 - [INFO] - Hoàn tất dịch thuật.
+2026-05-27 13:04:23,916 - [WARNING] - Có 1 mục bị lỗi dịch thuật. Vui lòng kiểm tra file: data\captions\cap.dress.train.vn_failed.json
+2026-05-27 14:14:09,162 - [INFO] - Phát hiện 9 file cần dịch: ['cap.dress.test.json', 'cap.dress.train.json', 'cap.dress.val.json', 'cap.shirt.test.json', 'cap.shirt.train.json', 'cap.shirt.val.json', 'cap.toptee.test.json', 'cap.toptee.train.json', 'cap.toptee.val.json']
+2026-05-27 14:14:09,163 - [INFO] - 
+=== ĐANG XỬ LÝ FILE: cap.dress.test.json ===
+2026-05-27 14:14:09,167 - [INFO] - Cần dịch: 2024 mục trong file cap.dress.test.json.
+2026-05-27 14:44:34,603 - [INFO] - Đã xử lý xong file cap.dress.test.json.
+2026-05-27 14:45:13,833 - [INFO] - Phát hiện 6 file cần dịch: ['cap.dress.train.json', 'cap.dress.val.json', 'cap.shirt.train.json', 'cap.shirt.val.json', 'cap.toptee.train.json', 'cap.toptee.val.json']
+2026-05-27 14:45:13,833 - [INFO] - 
+=== ĐANG XỬ LÝ FILE: cap.dress.train.json ===
+2026-05-27 14:45:13,862 - [INFO] - File cap.dress.train.json đã được dịch hoàn tất từ trước. Chuyển sang file tiếp theo.
+2026-05-27 14:45:13,863 - [INFO] - 
+=== ĐANG XỬ LÝ FILE: cap.dress.val.json ===
+2026-05-27 14:45:13,895 - [INFO] - File cap.dress.val.json đã được dịch hoàn tất từ trước. Chuyển sang file tiếp theo.
+2026-05-27 14:45:13,895 - [INFO] - 
+=== ĐANG XỬ LÝ FILE: cap.shirt.train.json ===
+2026-05-27 14:45:13,909 - [INFO] - Cần dịch: 5988 mục trong file cap.shirt.train.json.
+2026-05-27 17:56:34,266 - [INFO] - Đã xử lý xong file cap.shirt.train.json.
+2026-05-27 17:56:34,267 - [INFO] - 
+=== ĐANG XỬ LÝ FILE: cap.shirt.val.json ===
+2026-05-27 17:56:34,274 - [INFO] - Cần dịch: 2038 mục trong file cap.shirt.val.json.
+2026-05-27 18:56:46,170 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 19:00:21,186 - [INFO] - Đã xử lý xong file cap.shirt.val.json.
+2026-05-27 19:00:21,187 - [WARNING] - Có 1 lỗi trong file này. Xem chi tiết tại: data\captions\cap.shirt.val.vn_failed.json
+2026-05-27 19:00:21,188 - [INFO] - 
+=== ĐANG XỬ LÝ FILE: cap.toptee.train.json ===
+2026-05-27 19:00:21,205 - [INFO] - Cần dịch: 6027 mục trong file cap.toptee.train.json.
+2026-05-27 19:23:06,825 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 19:31:01,047 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 19:31:09,904 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 19:51:31,794 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 19:53:34,575 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 20:41:16,943 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 21:02:04,299 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 21:07:54,178 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 21:17:09,293 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 21:22:41,234 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 21:43:57,250 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 21:51:03,805 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 22:01:48,608 - [INFO] - Đã xử lý xong file cap.toptee.train.json.
+2026-05-27 22:01:48,608 - [WARNING] - Có 12 lỗi trong file này. Xem chi tiết tại: data\captions\cap.toptee.train.vn_failed.json
+2026-05-27 22:01:48,609 - [INFO] - 
+=== ĐANG XỬ LÝ FILE: cap.toptee.val.json ===
+2026-05-27 22:01:48,615 - [INFO] - Cần dịch: 1961 mục trong file cap.toptee.val.json.
+2026-05-27 22:22:57,173 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 22:35:36,648 - [WARNING] - Không thể dịch: ''. Giữ nguyên bản gốc.
+2026-05-27 23:03:36,772 - [INFO] - Đã xử lý xong file cap.toptee.val.json.
+2026-05-27 23:03:36,773 - [WARNING] - Có 2 lỗi trong file này. Xem chi tiết tại: data\captions\cap.toptee.val.vn_failed.json
+2026-05-27 23:03:36,774 - [INFO] - 
+ĐÃ HOÀN TẤT DỊCH TOÀN BỘ CÁC BỘ DỮ LIỆU!
