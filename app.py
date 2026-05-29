@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import streamlit as st
 from PIL import Image
 
-# --- Bỏ qua các cảnh báo (Warnings) của thư viện để Terminal gọn gàng ---
+# --- Suppress dependency warnings to maintain a clean execution terminal ---
 import warnings
 warnings.filterwarnings("ignore")
 import transformers
@@ -19,7 +19,7 @@ from sentence_transformers import SentenceTransformer
 from config import Config
 
 # ==========================================
-# 1. TÁI TẠO KIẾN TRÚC MẠNG COMBINER
+# 1. CORE NETWORK ARCHITECTURE RECONSTRUCTION
 # ==========================================
 class CombinerNetwork(nn.Module):
     def __init__(self, embed_dim=512, hidden_dim=1024):
@@ -44,32 +44,32 @@ class CombinerNetwork(nn.Module):
         return F.normalize(out, p=2, dim=-1)
 
 # ==========================================
-# 2. KHỞI TẠO HỆ THỐNG TRÊN RAM (CACHED)
+# 2. SYSTEM RAM INITIALIZATION (CACHED)
 # ==========================================
 @st.cache_resource
 def load_system():
-    """Tải tất cả Mô hình và Dữ liệu vào RAM để giao diện chạy mượt mà."""
+    """Load foundational models and offline database into RAM for seamless latency-free inference."""
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Loading system on {device.upper()}...")
+    print(f"[*] Loading inference systems on computational backend: {device.upper()}...")
     
-    # 1. Tải Text Model (M-CLIP)
+    # 1. Instantiate the M-CLIP Text Encoder
     text_model = SentenceTransformer(Config.TEXT_MODEL_ID, device=device)
     
-    # 2. Tải Vision Model (CLIP) - Bắt buộc để trích xuất ảnh người dùng upload
+    # 2. Instantiate the CLIP Vision Model
     vision_model = CLIPModel.from_pretrained(Config.VISION_MODEL_ID).to(device).eval()
     vision_processor = CLIPProcessor.from_pretrained(Config.VISION_MODEL_ID)
     
-    # 3. Tải Combiner Network (Kết quả bạn vừa Train)
+    # 3. Instantiate the empirically trained Combiner Network
     combiner = CombinerNetwork().to(device)
     combiner_path = os.path.join("models", "best_combiner.pth")
     if os.path.exists(combiner_path):
         combiner.load_state_dict(torch.load(combiner_path, map_location=device))
-        print("Đã tải thành công trọng số best_combiner.pth!")
+        print("[+] Optimal combiner weights successfully mapped into memory.")
     else:
-        st.warning("Không tìm thấy weights của Combiner! Hệ thống sẽ chạy với trọng số ngẫu nhiên.")
+        st.warning("Combiner weights missing! System fallback to stochastic parameters initialized.")
     combiner.eval()
     
-    # 4. Tải Kho Dữ Liệu Offline (77,000 ảnh)
+    # 4. Load the comprehensive offline representation database (approx. 77,000 artifacts)
     embeddings = np.load(Config.OUTPUT_EMBEDDINGS)
     img_tensors = torch.tensor(embeddings).to(device)
     
@@ -80,22 +80,22 @@ def load_system():
     return text_model, vision_model, vision_processor, combiner, img_tensors, index_to_id, device
 
 # ==========================================
-# 3. GIAO DIỆN STREAMLIT (MATERIAL DESIGN)
+# 3. STREAMLIT INTERFACE (MATERIAL DESIGN)
 # ==========================================
 def main():
     st.set_page_config(page_title="V-Fashion CIR", layout="wide", page_icon="🛍️")
     
-    # --- CSS INJECTION THEO CHUẨN GOOGLE MATERIAL DESIGN ---
+    # --- CSS INJECTION ADHERING TO GOOGLE MATERIAL DESIGN STANDARDS ---
     st.markdown("""
         <style>
-        /* Typography và Nền nền */
+        /* Typography and Neutral Background Layout */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
         html, body, [class*="css"] {
             font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa; /* Màu xám rất nhạt đặc trưng của Material */
+            background-color: #f8f9fa;
         }
         
-        /* Căn chỉnh header */
+        /* Central Header Formatting */
         .main-header {
             text-align: center;
             padding: 2rem 0 3rem 0;
@@ -111,11 +111,11 @@ def main():
             font-size: 1.1rem;
         }
 
-        /* Material Button (Nút Tìm kiếm) */
+        /* Material Component Button Constraints */
         div.stButton > button {
             background-color: #1a73e8 !important; /* Google Blue */
             color: white !important;
-            border-radius: 24px !important; /* Pill shape */
+            border-radius: 24px !important; /* Pill shape structure */
             border: none !important;
             box-shadow: 0 2px 4px rgba(26, 115, 232, 0.3) !important;
             font-weight: 500 !important;
@@ -131,7 +131,7 @@ def main():
             transform: translateY(-1px);
         }
 
-        /* Material Image Cards (Hiệu ứng ảnh nổi) */
+        /* Material Layout Artifacts */
         [data-testid="stImage"] {
             border-radius: 12px;
             overflow: hidden;
@@ -146,7 +146,7 @@ def main():
             z-index: 10;
         }
 
-        /* Tinh chỉnh Captions */
+        /* Captions Optimization */
         .result-caption {
             text-align: center;
             font-size: 0.9rem;
@@ -167,7 +167,7 @@ def main():
             font-size: 0.85rem;
         }
         
-        /* Khung nhập liệu (Tạo Card bọc vùng input) */
+        /* Control Panel Artifacts */
         .control-panel {
             background: white;
             padding: 2rem;
@@ -176,7 +176,7 @@ def main():
             border: 1px solid #f1f3f4;
         }
         
-        /* Khoảng cách thu gọn */
+        /* Viewport Boundaries */
         .block-container {
             padding-top: 2rem;
             padding-bottom: 2rem;
@@ -198,7 +198,7 @@ def main():
         st.error(f"Lỗi khởi tạo hệ thống: {e}")
         st.stop()
         
-    # Chia lại tỉ lệ cột để tạo sự cân đối
+    # Layout Distribution Architecture
     col1, col2 = st.columns([1.2, 2.8], gap="large")
     
     with col1:
@@ -210,7 +210,7 @@ def main():
         ref_image = None
         if uploaded_file is not None:
             ref_image = Image.open(uploaded_file).convert("RGB")
-            # Căn giữa và scale ảnh hợp lý
+            # Apply geometric constraints to UI visuals
             st.image(ref_image, caption="Ảnh gốc (Click để phóng to)", width=280)
             st.markdown("<br>", unsafe_allow_html=True)
             
@@ -236,11 +236,11 @@ def main():
             else:
                 with st.spinner("Đang phân tích ý định và tìm kiếm trong kho dữ liệu..."):
                     with torch.no_grad():
-                        # Bước 1: Rút trích Vector cho ảnh Upload
+                        # Phase 1: Reference image feature projection
                         inputs = vision_processor(images=[ref_image], return_tensors="pt").to(device)
                         outputs = vision_model.get_image_features(**inputs)
                         
-                        # Khắc phục lỗi phiên bản transformers API
+                        # API structure verification layer
                         if hasattr(outputs, 'image_embeds'):
                             ref_vec = outputs.image_embeds
                         elif isinstance(outputs, torch.Tensor):
@@ -251,18 +251,18 @@ def main():
                             
                         ref_vec = ref_vec / ref_vec.norm(p=2, dim=-1, keepdim=True)
                         
-                        # Bước 2: Rút trích Vector cho câu Tiếng Việt
+                        # Phase 2: Natural language feature embedding
                         text_vec = text_model.encode([modifier_text], convert_to_tensor=True, device=device)
                         text_vec = F.normalize(text_vec, p=2, dim=-1)
                         
-                        # Bước 3: Đưa qua Mạng Combiner
+                        # Phase 3: Gated non-linear fusion propagation
                         query_vec = combiner(ref_vec, text_vec)
                         
-                        # Bước 4: So khớp với 77,000 bức ảnh
+                        # Phase 4: Cosine similarity computation across the visual corpus manifold
                         similarities = torch.matmul(img_tensors, query_vec.squeeze())
                         scores, top_indices = torch.topk(similarities, Config.TOP_K_RETRIEVAL)
                     
-                    # Hiển thị Top K kết quả với giao diện thẻ (Card)
+                    # Material UI top-k spatial rendering
                     res_cols = st.columns(3, gap="medium")
                     for i, idx in enumerate(top_indices.cpu().numpy()):
                         result_id = index_to_id[idx]
@@ -271,7 +271,7 @@ def main():
                             res_img_path = os.path.join(Config.IMAGE_DIR, f"{result_id}.jpg")
                             with res_cols[i % 3]:
                                 st.image(Image.open(res_img_path), width="stretch")
-                                # Hiển thị badge điểm số theo chuẩn UI hiện đại
+                                # Render the quantitative similarity matrix metrics
                                 st.markdown(
                                     f"<div class='result-caption'>"
                                     f"ID: <b>{result_id}</b> <br>"
@@ -282,7 +282,7 @@ def main():
                         except Exception:
                             st.error(f"Lỗi đọc ảnh: {result_id}")
         else:
-            # Trạng thái rỗng ban đầu đẹp mắt
+            # Empty state spatial placeholder
             st.info("💡 Hãy tải ảnh lên và nhập mô tả để khám phá các sản phẩm thời trang.")
 
 if __name__ == "__main__":
